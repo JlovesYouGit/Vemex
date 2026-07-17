@@ -44,3 +44,8 @@ QODER_FREERUNER/.qoder/
 .seedgate_routing_log.json
 SeedGate/data/tracker.json
 SeedGate/data/snapshots/
+
+# Autonomous Execution
+.autonomous_triggers.json
+.autonomous_events.json
+.autonomous_consensus.json

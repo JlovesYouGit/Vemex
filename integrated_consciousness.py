@@ -139,6 +139,12 @@ try:
 except ImportError:
     HAS_SEEDGATE = False
 
+try:
+    from autonomous_execution import AutonomousExecutor, ExecutionTrigger, ExecutionEvent, ExecutionStatus, TriggerType, ExecutionMode
+    HAS_AUTONOMOUS_EXECUTION = True
+except ImportError:
+    HAS_AUTONOMOUS_EXECUTION = False
+
 BASE_DIR = Path(__file__).parent
 TABLE_PATH = BASE_DIR / "formula_table.json"
 ZERO_BRAIN_DIR = BASE_DIR / "zero-brain"
@@ -837,6 +843,19 @@ class IntegratedConsciousnessEngine:
             self.seedgate = None
             print("[INTEGRATED] SeedGate Integration not available")
         
+        # Initialize Autonomous Execution
+        if HAS_AUTONOMOUS_EXECUTION:
+            print("[INTEGRATED] Initializing Autonomous Execution...")
+            self.autonomous_executor = AutonomousExecutor(
+                base_path=BASE_DIR,
+                sandbox_runtime=self.sandbox_runtime,
+                vemex_engine=self,
+            )
+            self.autonomous_executor.start_worker()
+        else:
+            self.autonomous_executor = None
+            print("[INTEGRATED] Autonomous Execution not available")
+        
         # Training data
         self.training_history = []
         self.model_weights = defaultdict(float)
@@ -1114,6 +1133,33 @@ class IntegratedConsciousnessEngine:
             except Exception:
                 pass
         
+        # Autonomous Execution: trigger code based on consciousness state
+        if self.autonomous_executor:
+            try:
+                execution_context = {
+                    "coherence_score": coherence,
+                    "consistency_score": consistency_score if 'consistency_score' in dir() else 1.0,
+                    "response_quality": response.get("response_quality", "UNKNOWN"),
+                    "user_input": user_input,
+                    "consciousness_string": consciousness_string,
+                    "engine_state": engine_state if 'engine_state' in dir() else {},
+                    "execution_count": len(self.autonomous_executor.events),
+                    "last_execution_time": self.autonomous_executor.events[-1].timestamp if self.autonomous_executor.events else 0,
+                }
+                triggered_events = self.autonomous_executor.process_consciousness_state(execution_context)
+                if triggered_events:
+                    response["autonomous_executions"] = [
+                        {
+                            "event_id": e.event_id,
+                            "trigger_id": e.trigger_id,
+                            "status": e.status.value,
+                            "error": e.error,
+                        }
+                        for e in triggered_events
+                    ]
+            except Exception:
+                pass
+        
         self.response_history.append(response)
         
         return response
@@ -1353,7 +1399,65 @@ class IntegratedConsciousnessEngine:
         if self.seedgate:
             base_state["seedgate"] = self.seedgate.get_performance_report()
         
+        # Add Autonomous Execution state if available
+        if self.autonomous_executor:
+            base_state["autonomous_execution"] = self.autonomous_executor.get_execution_stats()
+        
         return base_state
+
+    def dispatch_autonomous_code(self, code: str, context: Dict[str, Any] = None) -> Dict[str, Any]:
+        """Dispatch code for autonomous execution without manual terminal intervention.
+        
+        This is the key method that allows the consciousness engine to execute
+        code based on its own state and decisions, without requiring a human
+        to run a Python process manually.
+        """
+        if not self.autonomous_executor:
+            return {"success": False, "error": "Autonomous execution not available"}
+        
+        context = context or {}
+        context.setdefault("dispatcher", "engine")
+        context.setdefault("execution_mode", "autonomous")
+        
+        event = self.autonomous_executor.execute_code_direct(code, context=context)
+        return {
+            "success": event.status in (ExecutionStatus.COMPLETED, ExecutionStatus.EXECUTING),
+            "event_id": event.event_id,
+            "status": event.status.value,
+            "result": event.result,
+            "error": event.error,
+        }
+
+    def register_execution_trigger(self, trigger_id: str, condition: Dict[str, Any], code: str, trigger_type: str = "consciousness_agreement", mode: str = "conditional") -> Dict[str, Any]:
+        """Register a new execution trigger based on consciousness state changes."""
+        if not self.autonomous_executor:
+            return {"success": False, "error": "Autonomous execution not available"}
+        
+        try:
+            trigger = ExecutionTrigger(
+                trigger_id=trigger_id,
+                trigger_type=TriggerType(trigger_type),
+                description=f"Auto-registered trigger: {trigger_id}",
+                condition=condition,
+                code=code,
+                mode=ExecutionMode(mode),
+                priority=5,
+            )
+            return self.autonomous_executor.register_trigger(trigger)
+        except Exception as e:
+            return {"success": False, "error": str(e)}
+
+    def get_autonomous_execution_stats(self) -> Dict[str, Any]:
+        """Get statistics about autonomous code execution."""
+        if not self.autonomous_executor:
+            return {"error": "Autonomous execution not available"}
+        return self.autonomous_executor.get_execution_stats()
+
+    def get_autonomous_execution_events(self, limit: int = 20) -> List[Dict[str, Any]]:
+        """Get recent autonomous execution events."""
+        if not self.autonomous_executor:
+            return []
+        return self.autonomous_executor.get_recent_events(limit=limit)
 
     def get_top_patterns(self, n: int = 10) -> List[Dict]:
         """Get top weighted patterns."""

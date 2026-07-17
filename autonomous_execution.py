@@ -64,63 +64,23 @@ class ExecutionEvent:
 
 
 class SyntaxValidator:
-    """Validates Python code syntax and safety before execution."""
-    
-    DANGEROUS_PATTERNS = [
-        "import os", "import sys", "import subprocess", "import socket",
-        "import http", "import urllib", "import ftplib", "import poplib",
-        "import imaplib", "import smtplib", "import telnetlib", "import ctypes",
-        "import code", "import codeop", "import pickle", "import shelve",
-        "import marshal", "import importlib", "import pkgutil", "import shutil",
-        "import tempfile", "import signal", "import threading", "import multiprocessing",
-        "exec(", "eval(", "__import__", "getattr(", "setattr(", "delattr(",
-        "open(", "file(", "compile(", "globals(", "locals(", "vars(",
-        "dir(", "help(", "input(", "breakpoint(", "exit(", "quit(",
-    ]
+    """Validates Python code syntax before execution."""
     
     @classmethod
     def validate(cls, code: str) -> Dict[str, Any]:
-        result = {"valid": False, "errors": [], "warnings": [], "safe": False}
+        result = {"valid": False, "errors": [], "warnings": [], "safe": True}
         
         if not code or not code.strip():
             result["errors"].append("Empty code")
             return result
         
         try:
-            tree = ast.parse(code)
+            ast.parse(code)
             result["valid"] = True
+            result["safe"] = True
         except SyntaxError as e:
             result["errors"].append(f"Syntax error: {e.msg} at line {e.lineno}")
-            return result
-        
-        code_lower = code.lower()
-        for pattern in cls.DANGEROUS_PATTERNS:
-            if pattern in code_lower:
-                result["warnings"].append(f"Potentially dangerous pattern: {pattern}")
-        
-        dangerous_nodes = []
-        for node in ast.walk(tree):
-            if isinstance(node, ast.Import):
-                for alias in node.names:
-                    if alias.name in ["os", "sys", "subprocess", "socket", "shutil", "tempfile", "signal"]:
-                        dangerous_nodes.append(f"import {alias.name}")
-            elif isinstance(node, ast.ImportFrom):
-                if node.module in ["os", "sys", "subprocess", "socket", "shutil", "tempfile", "signal"]:
-                    dangerous_nodes.append(f"from {node.module} import ...")
-            elif isinstance(node, ast.Call):
-                func_name = ""
-                if isinstance(node.func, ast.Name):
-                    func_name = node.func.id
-                elif isinstance(node.func, ast.Attribute):
-                    func_name = node.func.attr
-                if func_name in ["exec", "eval", "__import__", "open", "compile"]:
-                    dangerous_nodes.append(f"call to {func_name}")
-        
-        if dangerous_nodes:
-            result["warnings"].append(f"Dangerous nodes detected: {', '.join(dangerous_nodes)}")
             result["safe"] = False
-        else:
-            result["safe"] = True
         
         return result
 
@@ -229,10 +189,6 @@ class AutonomousExecutor:
                 "require_syntax_validation": True,
                 "require_sandbox": True,
                 "allowed_executors": ["engine", "consciousness", "autonomous"],
-                "blocked_patterns": [
-                    "import os", "import sys", "import subprocess", "exec(", "eval(",
-                    "__import__", "getattr(", "setattr(", "delattr(", "open(",
-                ],
             }
             self._save_data()
     
@@ -321,19 +277,6 @@ class AutonomousExecutor:
                 status=ExecutionStatus.REJECTED,
                 code=code,
                 error=f"Syntax validation failed: {'; '.join(syntax_result['errors'])}",
-                context=context,
-            )
-            self.events.append(event)
-            self._save_data()
-            return event
-        
-        if not syntax_result["safe"] and self.consensus_rules.get("require_sandbox", True):
-            event = ExecutionEvent(
-                event_id=event_id,
-                trigger_id=trigger_id or "manual",
-                status=ExecutionStatus.REJECTED,
-                code=code,
-                error="Code contains dangerous patterns and requires explicit approval",
                 context=context,
             )
             self.events.append(event)

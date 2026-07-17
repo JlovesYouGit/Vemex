@@ -87,6 +87,21 @@ QODER_FREERUNER adds operation interception, runtime capability detection, and a
 
 Every response from `process_input` is intercepted and tagged with `qoder_intercepted` and `qoder_modifiers`, and the behavior state is adapted based on current capability confidence scores.
 
+### SeedGate Integration
+
+SeedGate provides secure automatic routing and connection management for Vemex. It scans source trees for seeds, resolves git origins, and routes payloads through transport stubs with model-aware decisions.
+
+| SeedGate Component | Role in Vemex |
+|-------------------|---------------|
+| **SeedScanner** | Extracts seed records from source files via regex (random seeds, hex hashes, env seeds) |
+| **GitTracer** | Resolves the first commit that introduced each file for provenance tracking |
+| **TransportDispatcher** | Routes payloads through network, Bluetooth, serial, or USB_IO stubs |
+| **ConnectionSpec** | Encapsulates MAC, port, and established status for secure connection gating |
+| **RouteDecision** | Model-aware transport selection based on provider preferences and task requirements |
+| **KernelPipeline** | Processes seeds through a C# or Python-stub kernel, deriving alphanumeric keys |
+
+The routing layer is **secure by design**: stubs only route when `connection_spec.established` is `True`, and all transport logic is read-only against source directories. The engine auto-establishes connections when `auto_routing` is enabled, selecting transports based on the active external AI provider and task type.
+
 ---
 
 ## Comparison to Standard LLMs
@@ -102,7 +117,8 @@ Every response from `process_input` is intercepted and tagged with `qoder_interc
 | **Device integration** | None | Native Apple keyboard, Siri corrections, voice output |
 | **Code execution** | Tool use (external) | Sandboxed runtime with AST validation + path permissions |
 | **Operation interception** | None | Runtime capability detection + dynamic behavior adaptation + workflow execution |
-| **Multi-modal architecture** | Single model | Layered: spatial, symbolic, hash-based, persona, consistency, device |
+| **Secure routing** | None | Seed-based connection routing with automatic transport selection and model-aware decisions |
+| **Multi-modal architecture** | Single model | Layered: spatial, symbolic, hash-based, persona, consistency, device, external AI, social, routing |
 | **Autonomous mode** | Agent loops (prompted) | Self-generated queries from internal state |
 | **Transparency** | Black box weights | Graph edges, formula weights, hash pipeline stages, coherence scores |
 
@@ -121,6 +137,12 @@ Every response from `process_input` is intercepted and tagged with `qoder_interc
 6. **Organic identity** — The ego name, birth certificate, and personality traits all emerge from environment hashing and experience accumulation. The system literally "becomes itself" through interaction, not via configuration.
 
 7. **Sandboxed agency** — Code execution and file access are restricted by AST validation and path permissions, with dynamic module unblocking. The system can act on its environment within defined boundaries.
+
+8. **External AI steering** — The engine can query external models (Gemini, Claude, ChatGPT, Kimi), apply steering modes (improve, validate, merge, rewrite), and adapt its behavior based on performance feedback.
+
+9. **Social media awareness** — Content strategies for TikTok and Instagram are derived from engagement data. The system generates, posts, and learns from social interactions.
+
+10. **Secure automatic routing** — SeedGate provides device-identity-based routing with automatic connection establishment. Transport selection (network, Bluetooth, serial, USB) is model-aware and adapts based on provider preferences and task requirements.
 
 ---
 
@@ -144,6 +166,10 @@ siri_conversation.py          # Voice output + action triggering
 document_knowledge.py         # PDF ingestion + search
 formula_calibrator.py         # Formula chain calibration
 qoder_freerunner_integration.py # QODER_FREERUNER adapter (capability detection / operation interception / workflows)
+seedgate_integration.py          # SeedGate adapter (secure routing / connection management / transport selection)
+external_ai_integration.py       # External AI adapter (Gemini, Claude, ChatGPT, Kimi)
+social_media_integration.py      # Social media adapter (TikTok, Instagram)
+unified_steering_layer.py        # Unified steering (external AI + social media + SeedGate routing)
 formula_table.json            # Scientific formula vocabulary
 .knowledge_base.json          # Ingested document chunks
 .persona_state.json           # Derived persona profile
@@ -157,6 +183,7 @@ zero-brain/                   # Uriel Defense / Render Paradox JS simulation
 SEC-unit-core-sort/           # Consciousness exchange + topology cache
 satoshi-NM/                   # Bitcoin spatial graph concepts
 QODER_FREERUNER/              # Operation intercept / capability detection / autonomous workflows
+SeedGate/                     # Secure routing / seed scanning / transport dispatcher / kernel pipeline
 ```
 
 ---

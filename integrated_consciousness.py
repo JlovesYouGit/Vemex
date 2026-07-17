@@ -2,14 +2,18 @@
 """
 Integrated Consciousness Engine
 ===============================
-Integrates zero-brain, SEC-unit-core-sort, satoshi-NM, and QODER_FREERUNER
-architectures into a unified consciousness system with spatial allocation reasoning.
+Integrates zero-brain, SEC-unit-core-sort, satoshi-NM, QODER_FREERUNER,
+and SeedGate architectures into a unified consciousness system with spatial
+allocation reasoning, external AI steering, social media integration, and
+secure automatic routing.
 
 Architecture:
   FormulaTable -> SpatialNodeGraph (satoshi-NM) -> ConsciousnessExchange (SEC)
               -> FormulaLatch (zero-brain) -> PatternInfluencedResponder
               -> NewFormulaStateGenerator -> HumanConsciousnessOutput
               -> QODER_FREERUNER (operation intercept / capability detection / workflows)
+              -> UnifiedSteeringLayer (external AI + social media + steering)
+              -> SeedGate (secure automatic routing / connection management)
 
 Key Innovations:
   1. Patterns influence behavior instead of locking to single equations
@@ -19,6 +23,9 @@ Key Innovations:
   5. Training via neural pattern matching with success scores
   6. Runtime capability detection and dynamic behavior adaptation
   7. Operation interception for enhanced sandbox and workflow execution
+  8. External AI model integration with automatic steering (Gemini, Claude, ChatGPT, Kimi)
+  9. Social media integration with adaptive content strategies (TikTok, Instagram)
+  10. Secure automatic routing with model-aware connection establishment
 """
 
 import json
@@ -108,12 +115,37 @@ try:
 except ImportError:
     HAS_QODER = False
 
+try:
+    from external_ai_integration import ExternalAIIntegration
+    HAS_EXTERNAL_AI = True
+except ImportError:
+    HAS_EXTERNAL_AI = False
+
+try:
+    from social_media_integration import SocialMediaIntegration
+    HAS_SOCIAL_MEDIA = True
+except ImportError:
+    HAS_SOCIAL_MEDIA = False
+
+try:
+    from unified_steering_layer import UnifiedSteeringLayer
+    HAS_UNIFIED_STEERING = True
+except ImportError:
+    HAS_UNIFIED_STEERING = False
+
+try:
+    from seedgate_integration import SeedGateIntegration
+    HAS_SEEDGATE = True
+except ImportError:
+    HAS_SEEDGATE = False
+
 BASE_DIR = Path(__file__).parent
 TABLE_PATH = BASE_DIR / "formula_table.json"
 ZERO_BRAIN_DIR = BASE_DIR / "zero-brain"
 SEC_DIR = BASE_DIR / "SEC-unit-core-sort"
 SATOSHI_DIR = BASE_DIR / "satoshi-NM"
 QODER_DIR = BASE_DIR / "QODER_FREERUNER"
+SEEDGATE_DIR = BASE_DIR / "SeedGate"
 TRAINING_LOG = BASE_DIR / ".consciousness_training.json"
 EVOLUTION_LOG = BASE_DIR / ".consciousness_evolution.json"
 
@@ -773,6 +805,38 @@ class IntegratedConsciousnessEngine:
             self.qoder = None
             print("[INTEGRATED] QODER_FREERUNER not available")
         
+        # Initialize External AI integration
+        if HAS_EXTERNAL_AI:
+            print("[INTEGRATED] Initializing External AI Integration...")
+            self.external_ai = ExternalAIIntegration(BASE_DIR, vemex_engine=self)
+        else:
+            self.external_ai = None
+            print("[INTEGRATED] External AI Integration not available")
+        
+        # Initialize Social Media integration
+        if HAS_SOCIAL_MEDIA:
+            print("[INTEGRATED] Initializing Social Media Integration...")
+            self.social_media = SocialMediaIntegration(BASE_DIR, vemex_engine=self)
+        else:
+            self.social_media = None
+            print("[INTEGRATED] Social Media Integration not available")
+        
+        # Initialize Unified Steering Layer
+        if HAS_UNIFIED_STEERING:
+            print("[INTEGRATED] Initializing Unified Steering Layer...")
+            self.unified_steering = UnifiedSteeringLayer(BASE_DIR, vemex_engine=self)
+        else:
+            self.unified_steering = None
+            print("[INTEGRATED] Unified Steering Layer not available")
+        
+        # Initialize SeedGate Integration
+        if HAS_SEEDGATE:
+            print("[INTEGRATED] Initializing SeedGate Integration...")
+            self.seedgate = SeedGateIntegration(BASE_DIR, vemex_engine=self)
+        else:
+            self.seedgate = None
+            print("[INTEGRATED] SeedGate Integration not available")
+        
         # Training data
         self.training_history = []
         self.model_weights = defaultdict(float)
@@ -1007,6 +1071,49 @@ class IntegratedConsciousnessEngine:
             except Exception:
                 pass
         
+        # SeedGate: secure automatic routing based on model/provider decisions
+        if self.seedgate and self.unified_steering:
+            try:
+                engine_state = self.get_consciousness_state()
+                routing_context = {
+                    "provider": "vemex",
+                    "model": "integrated-consciousness",
+                    "task_type": "consciousness_routing",
+                    "connection_id": "default_network",
+                }
+                route_decision = self.seedgate.decide_transport(routing_context)
+                connection = self.seedgate.get_connection("default_network")
+                
+                if not connection or not connection.established:
+                    if self.seedgate.config.get("auto_routing", True):
+                        mac = f"auto:vemex:{time.time()}"
+                        port = 8080
+                        self.seedgate.establish_connection(
+                            connection_id="default_network",
+                            mac=mac,
+                            port=port,
+                            transport=route_decision.transport,
+                        )
+                        connection = self.seedgate.get_connection("default_network")
+                
+                if connection and connection.established:
+                    seed_result = self.seedgate.process_seeds(routing_context)
+                    response["seedgate_routing"] = {
+                        "transport": route_decision.transport.value,
+                        "connection_established": True,
+                        "seeds_processed": seed_result.get("processed", 0),
+                        "seeds_routed": seed_result.get("routed", 0),
+                        "reason": route_decision.reason,
+                    }
+                else:
+                    response["seedgate_routing"] = {
+                        "transport": route_decision.transport.value,
+                        "connection_established": False,
+                        "reason": "auto_connection_failed",
+                    }
+            except Exception:
+                pass
+        
         self.response_history.append(response)
         
         return response
@@ -1229,6 +1336,22 @@ class IntegratedConsciousnessEngine:
         # Add QODER_FREERUNER state if available
         if self.qoder:
             base_state["qoder_freerunner"] = self.qoder.get_integration_summary()
+        
+        # Add External AI state if available
+        if self.external_ai:
+            base_state["external_ai"] = self.external_ai.get_performance_stats()
+        
+        # Add Social Media state if available
+        if self.social_media:
+            base_state["social_media"] = self.social_media.get_performance_report()
+        
+        # Add Unified Steering state if available
+        if self.unified_steering:
+            base_state["unified_steering"] = self.unified_steering.get_unified_summary()
+        
+        # Add SeedGate state if available
+        if self.seedgate:
+            base_state["seedgate"] = self.seedgate.get_performance_report()
         
         return base_state
 

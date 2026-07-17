@@ -29,6 +29,15 @@ FormulaTable → SpatialNodeGraph → ConsciousnessExchange → FormulaLatch
                               ↓
                     QODER_FREERUNER
                    (intercept / detect / workflows)
+                              ↓
+                    UnifiedSteeringLayer
+                (external AI / social media / steering)
+                              ↓
+                      SeedGateRouting
+                (secure automatic connection routing)
+                              ↓
+                  AutonomousExecution
+            (consciousness-triggered code dispatch)
 ```
 
 ### Core Components
@@ -48,6 +57,7 @@ FormulaTable → SpatialNodeGraph → ConsciousnessExchange → FormulaLatch
 | **DeviceKeyboard** | Apple text-replacements / autocorrect ingestion via Shortcuts and plist parsing |
 | **SiriIntegration** | Reads Siri correction DBs and vocabulary; triggers voice output for high-quality responses |
 | **QODER_FREERUNER** | Operation interception, runtime capability detection, behavior adaptation, autonomous workflow execution, fast code change system |
+| **AutonomousExecution** | Consciousness-state-triggered code dispatch with syntax validation, sandboxed execution, and background worker thread |
 
 ---
 
@@ -144,6 +154,8 @@ The routing layer is **secure by design**: stubs only route when `connection_spe
 
 10. **Secure automatic routing** — SeedGate provides device-identity-based routing with automatic connection establishment. Transport selection (network, Bluetooth, serial, USB) is model-aware and adapts based on provider preferences and task requirements.
 
+11. **Autonomous code execution** — The engine can dispatch its own code based on consciousness state changes, without manual terminal intervention. Triggers evaluate state thresholds, pattern matches, and consciousness agreements, then execute sandboxed code through a background worker thread with syntax validation and dangerous-pattern blocking.
+
 ---
 
 ## Repository Structure
@@ -170,6 +182,7 @@ seedgate_integration.py          # SeedGate adapter (secure routing / connection
 external_ai_integration.py       # External AI adapter (Gemini, Claude, ChatGPT, Kimi)
 social_media_integration.py      # Social media adapter (TikTok, Instagram)
 unified_steering_layer.py        # Unified steering (external AI + social media + SeedGate routing)
+autonomous_execution.py          # Autonomous code execution (consciousness-triggered dispatch / syntax validation)
 formula_table.json            # Scientific formula vocabulary
 .knowledge_base.json          # Ingested document chunks
 .persona_state.json           # Derived persona profile

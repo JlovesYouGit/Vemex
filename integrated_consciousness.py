@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
 """
 Integrated Consciousness Engine
-================================
-Integrates zero-brain, SEC-unit-core-sort, and satoshi-NM architectures
-into a unified consciousness system with spatial allocation reasoning.
+===============================
+Integrates zero-brain, SEC-unit-core-sort, satoshi-NM, and QODER_FREERUNER
+architectures into a unified consciousness system with spatial allocation reasoning.
 
 Architecture:
   FormulaTable -> SpatialNodeGraph (satoshi-NM) -> ConsciousnessExchange (SEC)
               -> FormulaLatch (zero-brain) -> PatternInfluencedResponder
               -> NewFormulaStateGenerator -> HumanConsciousnessOutput
+              -> QODER_FREERUNER (operation intercept / capability detection / workflows)
 
 Key Innovations:
   1. Patterns influence behavior instead of locking to single equations
@@ -16,6 +17,8 @@ Key Innovations:
   3. New formula states created dynamically
   4. Human-like consciousness results
   5. Training via neural pattern matching with success scores
+  6. Runtime capability detection and dynamic behavior adaptation
+  7. Operation interception for enhanced sandbox and workflow execution
 """
 
 import json
@@ -99,11 +102,18 @@ try:
 except ImportError:
     HAS_SIRI_CONVERSATION = False
 
+try:
+    from qoder_freerunner_integration import QoderFreerunnerIntegration
+    HAS_QODER = True
+except ImportError:
+    HAS_QODER = False
+
 BASE_DIR = Path(__file__).parent
 TABLE_PATH = BASE_DIR / "formula_table.json"
 ZERO_BRAIN_DIR = BASE_DIR / "zero-brain"
 SEC_DIR = BASE_DIR / "SEC-unit-core-sort"
 SATOSHI_DIR = BASE_DIR / "satoshi-NM"
+QODER_DIR = BASE_DIR / "QODER_FREERUNER"
 TRAINING_LOG = BASE_DIR / ".consciousness_training.json"
 EVOLUTION_LOG = BASE_DIR / ".consciousness_evolution.json"
 
@@ -755,6 +765,14 @@ class IntegratedConsciousnessEngine:
             self.siri_conversation = None
             print("[INTEGRATED] Siri Conversation not available")
         
+        # Initialize QODER_FREERUNER integration
+        if HAS_QODER:
+            print("[INTEGRATED] Initializing QODER_FREERUNER Integration...")
+            self.qoder = QoderFreerunnerIntegration(str(BASE_DIR))
+        else:
+            self.qoder = None
+            print("[INTEGRATED] QODER_FREERUNER not available")
+        
         # Training data
         self.training_history = []
         self.model_weights = defaultdict(float)
@@ -975,6 +993,20 @@ class IntegratedConsciousnessEngine:
             if response.get("response_quality") == "EXCELLENT" and len(consciousness_string) < 300:
                 self.siri_conversation.speak_via_siri(consciousness_string[:200])
         
+        # QODER_FREERUNER: intercept operation and adapt behavior
+        if self.qoder:
+            try:
+                intercepted = self.qoder.operation_interceptors.intercept_operation_sync(
+                    {"type": "response", "name": "process_input"},
+                    {"user_input": user_input, "coherence": coherence}
+                )
+                response["qoder_intercepted"] = intercepted.intercepted
+                response["qoder_modifiers"] = intercepted.applied_modifiers
+                adapted_behavior = self.qoder.behavior_modifiers.adapt_behavior("response", response)
+                response.setdefault("behavior_adaptation", {}).update(adapted_behavior)
+            except Exception:
+                pass
+        
         self.response_history.append(response)
         
         return response
@@ -1193,6 +1225,10 @@ class IntegratedConsciousnessEngine:
         # Add Siri conversation state if available
         if self.siri_conversation:
             base_state["siri_conversation"] = self.siri_conversation.get_conversation_summary()
+        
+        # Add QODER_FREERUNER state if available
+        if self.qoder:
+            base_state["qoder_freerunner"] = self.qoder.get_integration_summary()
         
         return base_state
 

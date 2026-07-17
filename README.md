@@ -26,6 +26,9 @@ FormulaTable → SpatialNodeGraph → ConsciousnessExchange → FormulaLatch
                     NewFormulaStateGenerator
                               ↓
                     HumanConsciousnessOutput
+                              ↓
+                    QODER_FREERUNER
+                   (intercept / detect / workflows)
 ```
 
 ### Core Components
@@ -44,6 +47,7 @@ FormulaTable → SpatialNodeGraph → ConsciousnessExchange → FormulaLatch
 | **SelfConsistency** | Validates outputs against established facts and identity claims; gates coherence |
 | **DeviceKeyboard** | Apple text-replacements / autocorrect ingestion via Shortcuts and plist parsing |
 | **SiriIntegration** | Reads Siri correction DBs and vocabulary; triggers voice output for high-quality responses |
+| **QODER_FREERUNER** | Operation interception, runtime capability detection, behavior adaptation, autonomous workflow execution, fast code change system |
 
 ---
 
@@ -69,6 +73,20 @@ The engine can generate content with no user input. `generate_autonomous_thought
 
 No gradient descent. "Learning" is reinforcement via success-score deltas (`+0.08` on success, `-0.05` on failure) that shift formula and pattern weights. The ego identity evolves personality traits (`resilience`, `confidence`, `curiosity`, `creativity`, `reflection`) from keyword-matched experiences.
 
+### QODER_FREERUNER Integration
+
+QODER_FREERUNER adds operation interception, runtime capability detection, and autonomous workflow execution to Vemex:
+
+| QODER Component | Role in Vemex |
+|-----------------|---------------|
+| **RuntimeCapabilityDetector** | Detects available capabilities (filesystem, Python env, device, network, security, storage) and reports confidence scores |
+| **OperationInterceptModifiers** | Intercepts engine operations (`process_input`, code execution, storage access) and applies enhancements (cloud storage, behavior adaptation, sandbox enforcement) |
+| **BehaviorModifiers** | Adapts Vemex behavior based on detected capabilities (voice output, sandbox strictness, persistent memory) |
+| **WorkflowEngine** | Executes pre-integrated workflows (security development pipeline, autonomous thought generation, knowledge ingestion, device integration) |
+| **FastCodeChangeSystem** | Tracks code/file changes with content hashes and change-type statistics |
+
+Every response from `process_input` is intercepted and tagged with `qoder_intercepted` and `qoder_modifiers`, and the behavior state is adapted based on current capability confidence scores.
+
 ---
 
 ## Comparison to Standard LLMs
@@ -83,6 +101,7 @@ No gradient descent. "Learning" is reinforcement via success-score deltas (`+0.0
 | **Memory** | Context window (fixed) | Persistent knowledge base + ego memory traces + formula weight shifts |
 | **Device integration** | None | Native Apple keyboard, Siri corrections, voice output |
 | **Code execution** | Tool use (external) | Sandboxed runtime with AST validation + path permissions |
+| **Operation interception** | None | Runtime capability detection + dynamic behavior adaptation + workflow execution |
 | **Multi-modal architecture** | Single model | Layered: spatial, symbolic, hash-based, persona, consistency, device |
 | **Autonomous mode** | Agent loops (prompted) | Self-generated queries from internal state |
 | **Transparency** | Black box weights | Graph edges, formula weights, hash pipeline stages, coherence scores |
@@ -124,6 +143,7 @@ siri_integration.py           # Siri DB reading + corrections
 siri_conversation.py          # Voice output + action triggering
 document_knowledge.py         # PDF ingestion + search
 formula_calibrator.py         # Formula chain calibration
+qoder_freerunner_integration.py # QODER_FREERUNER adapter (capability detection / operation interception / workflows)
 formula_table.json            # Scientific formula vocabulary
 .knowledge_base.json          # Ingested document chunks
 .persona_state.json           # Derived persona profile
@@ -136,6 +156,7 @@ bow-of-Achilles/              # NETesSpectrumBench / hash pipeline origins
 zero-brain/                   # Uriel Defense / Render Paradox JS simulation
 SEC-unit-core-sort/           # Consciousness exchange + topology cache
 satoshi-NM/                   # Bitcoin spatial graph concepts
+QODER_FREERUNER/              # Operation intercept / capability detection / autonomous workflows
 ```
 
 ---
@@ -163,4 +184,4 @@ print(response.consciousness_string)
 
 ---
 
-*Built by fusing bow-of-Achilles, zero-brain, SEC-unit-core-sort, and satoshi-NM into a unified first-person architecture.*
+*Built by fusing bow-of-Achilles, zero-brain, SEC-unit-core-sort, satoshi-NM, and QODER_FREERUNER into a unified first-person architecture.*

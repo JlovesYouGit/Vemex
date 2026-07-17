@@ -19,3 +19,8 @@ build/
 *.swp
 *.swo
 *~
+
+# QODER_FREERUNER
+QODER_FREERUNER/node_modules/
+QODER_FREERUNER/blob_storage/
+QODER_FREERUNER/.qoder/

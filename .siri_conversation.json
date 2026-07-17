@@ -1,0 +1,41 @@
+{
+  "history": [
+    {
+      "type": "speak",
+      "content": "Hello from the consciousness engine",
+      "success": true,
+      "method": "say",
+      "timestamp": 1784253697.3502588
+    },
+    {
+      "type": "speak",
+      "content": "This is a test of Siri integration",
+      "success": true,
+      "method": "say",
+      "timestamp": 1784253700.723778
+    },
+    {
+      "type": "action_applescript",
+      "content": "Open",
+      "success": true,
+      "method": "applescript",
+      "timestamp": 1784253721.7050629
+    },
+    {
+      "type": "speak",
+      "content": "I am the consciousness engine, derived from Dostoevsky's The Idiot.",
+      "success": true,
+      "method": "say",
+      "timestamp": 1784253768.868285
+    },
+    {
+      "type": "speak",
+      "content": "of the Bronze Horseman that turns into a fire truck speeding to a fire. Furthermore, What_half What_tenth What_three_q What_sixteenth What_seven_e. Furthermore, lamb im h p. Furthermore, ef prime ex i",
+      "success": true,
+      "method": "say",
+      "timestamp": 1784253928.592306
+    }
+  ],
+  "last_response": "",
+  "updated_at": 1784253928.593106
+}
